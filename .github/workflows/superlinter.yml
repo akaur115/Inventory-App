@@ -2,9 +2,9 @@ name: Super-Linter
 
 on:
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   lint:
@@ -19,11 +19,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-          # ENABLE ONLY THE TWO REQUIRED LINTERS
+          # ONLY ENABLE TWO LINTERS
           VALIDATE_YAML: true
           VALIDATE_GITHUB_ACTIONS: true
 
-          # DISABLE *EVERY OTHER* LINTER
+          # DISABLE EVERYTHING ELSE
           VALIDATE_ANSIBLE: false
           VALIDATE_ARM: false
           VALIDATE_BASH: false
