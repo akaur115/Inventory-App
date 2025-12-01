@@ -1,0 +1,35 @@
+name: Super-Linter
+
+on:
+  pull_request:
+    branches: ["main"]
+  push:
+    branches: ["main"]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0              
+          clean: true
+
+      - name: Fix shallow clone issue
+        run: |
+          git fetch --unshallow || true
+          git fetch --all --tags || true
+
+      - name: Run Super-Linter
+        uses: github/super-linter@v7
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+          # Disable all linters by default
+          VALIDATE_ALL_CODEBASE: false
+
+          # Enable ONLY these two
+          VALIDATE_YAML: true
+          VALIDATE_GITHUB_ACTIONS: true

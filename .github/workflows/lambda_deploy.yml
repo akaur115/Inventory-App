@@ -1,0 +1,36 @@
+name: Lambda Deploy
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "**/lambda_function.py"
+
+jobs:
+  deploy-lambda:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: us-east-1
+
+      - name: Deploy Lambda functions
+        run: |
+          for d in */ ; do
+            if [ -f "$d/lambda_function.py" ]; then
+              FUNCTION_NAME=$(basename "$d")
+              zip -j lambda.zip "$d/lambda_function.py"
+              aws lambda update-function-code \
+                --function-name "$FUNCTION_NAME" \
+                --zip-file fileb://lambda.zip
+              rm lambda.zip
+            fi
+          done
